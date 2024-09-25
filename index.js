@@ -147,7 +147,6 @@ function renderStoreItems(filterType) {
           img.alt = item.name;
           divIcon.appendChild(img);
           
-
           // button
           const button = document.createElement('button');
           button.textContent = 'Add to cart';
