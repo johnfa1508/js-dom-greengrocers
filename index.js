@@ -1,54 +1,70 @@
+const ProductTypeEnum = Object.freeze({
+  DEFAULT: 'default',
+  FRUIT: 'fruits',
+  VEGETABLE: 'vegetables',
+});
+
 const state = {
   items: [
     {
       id: "001-beetroot",
       name: "beetroot",
-      price: 0.35
+      price: 0.35,
+      type: ProductTypeEnum.VEGETABLE
     },
     {
       id: "002-carrot",
       name: "carrot",
-      price: 0.35
+      price: 0.35,
+      type: ProductTypeEnum.VEGETABLE
     },
     {
       id: "003-apple",
       name: "apple",
-      price: 0.35
+      price: 0.35,
+      type: ProductTypeEnum.FRUIT
     },
     {
       id: "004-apricot",
       name: "apricot",
-      price: 0.35
+      price: 0.35,
+      type: ProductTypeEnum.FRUIT
     },
     {
       id: "005-avocado",
       name: "avocado",
-      price: 0.35
+      price: 0.35,
+      type: ProductTypeEnum.FRUIT
     },
     {
       id: "006-bananas",
       name: "bananas",
-      price: 0.35
+      price: 0.35,
+      type: ProductTypeEnum.FRUIT
     },
     {
       id: "007-bell-pepper",
       name: "bell pepper",
-      price: 0.35
+      price: 0.35,
+      type: ProductTypeEnum.VEGETABLE
     },
     {
       id: "008-berry",
       name: "berry",
-      price: 0.35
+      price: 0.35,
+      type: ProductTypeEnum.FRUIT
     },
     {
       id: "009-blueberry",
       name: "blueberry",
-      price: 0.35
+      price: 0.35,
+      type: ProductTypeEnum.FRUIT
     },
     {
       id: "010-eggplant",
       name: "eggplant",
-      price: 0.35
+      price: 0.35,
+      type: ProductTypeEnum.VEGETABLE
     }
   ],
   cart: []
@@ -57,46 +73,119 @@ const state = {
 const storeItemList = document.querySelector('.store--item-list');
 const cartItemList = document.querySelector('.cart--item-list')
 const total = document.querySelector('.total-number')
+const filterDropdown = document.querySelector('.filter--buttons')
+let filter = ProductTypeEnum.DEFAULT
 
-function renderStoreItems() {
+function renderFilterDropdown() {
+  filterDropdown.innerHTML = '';
+
+  const label = document.createElement('label');
+  label.for = 'filters'
+  label.innerText = 'Filter by:'
+
+  const select = document.createElement('select');
+  select.id = 'selectTEST'
+  select.name = 'filters'
+
+  const defaultOption = document.createElement('option');
+  defaultOption.value = ProductTypeEnum.DEFAULT;
+  defaultOption.innerText = 'Default'
+  select.appendChild(defaultOption)
+
+  const vegetableOption = document.createElement('option');
+  vegetableOption.value = ProductTypeEnum.VEGETABLE;
+  vegetableOption.innerText = 'Vegetables'
+  select.appendChild(vegetableOption)
+
+  const fruitOption = document.createElement('option');
+  fruitOption.value = ProductTypeEnum.FRUIT;
+  fruitOption.innerText = 'Fruits'
+  select.appendChild(fruitOption)
+
+  const applyFilterButton = document.createElement('button');
+  applyFilterButton.addEventListener('click', applyFilterOption);
+  applyFilterButton.innerText = 'Apply filter'
+
+  filterDropdown.appendChild(label);
+  filterDropdown.appendChild(select);
+  filterDropdown.appendChild(applyFilterButton);
+}
+
+function applyFilterOption() {
+  selectElement = document.querySelector('#selectTEST');
+  selectedValue = selectElement.value;
+
+  renderStoreItems(selectedValue)
+}
+
+function renderStoreItems(filterType) {
   storeItemList.innerHTML = '';
 
-   state.items.forEach((item) => {
-    /*
-      <li>
-        <div class="store--item-icon">
-          <img src="assets/icons/001-beetroot.svg" alt="beetroot" />
-        </div>
+    state.items.forEach((item) => {
+      /*
+        <li>
+          <div class="store--item-icon">
+            <img src="assets/icons/001-beetroot.svg" alt="beetroot" />
+          </div>
 
-        <button>Add to cart</button>
-      </li>
-    */
+          <button>Add to cart</button>
+        </li>
+      */
 
-    const li = document.createElement('li');
+      if (filterType !== ProductTypeEnum.DEFAULT) {
+        if (item.type === filterType) {
+          const li = document.createElement('li');
 
-    // div
-    const divIcon = document.createElement('div');
-    divIcon.className = 'store--item-icon';
-    li.appendChild(divIcon);
+          // div
+          const divIcon = document.createElement('div');
+          divIcon.className = 'store--item-icon';
+          li.appendChild(divIcon);
 
-    // img
-    const img = document.createElement('img');
-    img.src = `assets/icons/${item.id}.svg`;
-    img.alt = item.name;
-    divIcon.appendChild(img);
-    
+          // img
+          const img = document.createElement('img');
+          img.src = `assets/icons/${item.id}.svg`;
+          img.alt = item.name;
+          divIcon.appendChild(img);
+          
 
-    // button
-    const button = document.createElement('button');
-    button.textContent = 'Add to cart';
-    li.appendChild(button);
+          // button
+          const button = document.createElement('button');
+          button.textContent = 'Add to cart';
+          li.appendChild(button);
 
-    button.addEventListener('click', () => {
-      addItemToCart(item);
+          button.addEventListener('click', () => {
+            addItemToCart(item);
+          });
+
+          storeItemList.appendChild(li);
+        }
+      } else {
+        const li = document.createElement('li');
+
+        // div
+        const divIcon = document.createElement('div');
+        divIcon.className = 'store--item-icon';
+        li.appendChild(divIcon);
+
+        // img
+        const img = document.createElement('img');
+        img.src = `assets/icons/${item.id}.svg`;
+        img.alt = item.name;
+        divIcon.appendChild(img);
+        
+
+        // button
+        const button = document.createElement('button');
+        button.textContent = 'Add to cart';
+        li.appendChild(button);
+
+        button.addEventListener('click', () => {
+          addItemToCart(item);
+        });
+
+        storeItemList.appendChild(li);
+      }
     });
-
-    storeItemList.appendChild(li);
-  });
 }
 
 function renderCartItems() {
@@ -208,6 +297,7 @@ function calculateTotal() {
   total.textContent = `£${totalAmount.toFixed(2)}`;
 }
 
-renderStoreItems();
+renderFilterDropdown();
+renderStoreItems(filter);
 renderCartItems();
 calculateTotal();
