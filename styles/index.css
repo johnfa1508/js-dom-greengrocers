@@ -35,6 +35,11 @@ button {
   text-align: center;
 }
 
+.filter--buttons {
+  text-align: center;
+  padding: 1rem;
+}
+
 .store--item-list {
   display: grid;
   grid-template-columns: repeat(4, 125px);
